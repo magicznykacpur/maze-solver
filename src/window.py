@@ -8,6 +8,7 @@ class Window():
         self.root = Tk()
         self.root.title = "Maze Solver"
         self.root.protocol("Maze Solver", self.close)
+        self.root.geometry(f"{self.width}x{self.height}")
 
         self.canvas = Canvas()
         self.canvas.pack()
@@ -26,3 +27,6 @@ class Window():
 
     def close(self):
         self.window_running = False
+
+    def draw_line(self, line, fill_color="red"):
+        line.draw(self.canvas, fill_color)
