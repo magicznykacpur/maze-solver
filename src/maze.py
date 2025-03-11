@@ -31,6 +31,7 @@ class Maze:
         if self.window:
             self._break_entrance_and_exit()
             self._break_walls_r(0, 0)
+            self._reset_cells_visited()
 
     def _create_cells(self):
         for _ in range(self.num_rows):
@@ -80,6 +81,11 @@ class Maze:
             self._knock_walls_between(chosen_cell, (i, j))
 
             self._break_walls_r(chosen_cell[0], chosen_cell[1])
+
+    def _reset_cells_visited(self):
+        for row in self.cells:
+            for cell in row:
+                cell.visited = False
 
     def _get_adjacent_cells(self, i, j):
         if i == 0 and j == 0:
@@ -143,3 +149,39 @@ class Maze:
         self._draw_cell(cell[0], cell[1])
         self.cells[other[0]][other[1]].has_right_wall = False
         self._draw_cell(other[0], other[1])
+
+    def solve(self):
+        return self._solve_r(0, 0)
+
+    def _solve_r(self, i, j):
+        self._animate()
+        self.cells[i][j].visited = True
+
+        if self.cells[i][j] == self.cells[-1][-1]:
+            return True
+
+        adjacent_cells = self._get_adjacent_cells(i, j)
+        possible_directions = self._get_possible_directions(adjacent_cells)
+
+        for cell in possible_directions:
+            if not self._is_blocking((i, j), cell):
+                self.cells[i][j].draw_move(self.cells[cell[0]][cell[1]])
+                self._solve_r(cell[0], cell[1])
+                # next_move = self._solve_r(cell[0], cell[1])
+                # if next_move:
+                #     return True
+                # else:
+                #     self.cells[i][j].draw_move(self.cells[cell[0]][cell[1]], True)
+
+        return False
+
+    def _is_blocking(self, cell, other):
+        if cell[0] == other[0]:
+            if cell[1] > other[1]:
+                return self.cells[other[0]][other[1]].has_left_wall
+            else:
+                return self.cells[other[0]][other[1]].has_right_wall
+        elif cell[0] > other[0]:
+            return self.cells[other[0]][other[1]].has_bottom_wall
+        else:
+            return self.cells[other[0]][other[1]].has_top_wall

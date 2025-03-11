@@ -40,7 +40,7 @@ class Cell:
         )
 
     def draw_move(self, to_cell, undo=False):
-        fill_color = "red" if undo else "gray"
+        fill_color = "gray" if undo else "red"
 
         self_center = (self.x0 + self.x1) / 2, (self.y0 + self.y1) / 2
         to_cell_center = (to_cell.x0 + to_cell.x1) / 2, (to_cell.y0 + to_cell.y1) / 2
@@ -52,7 +52,7 @@ class Cell:
             to_cell_center[0],
             to_cell_center[1],
             fill=fill_color,
-            width=4,
+            width=3,
         )
 
     def __repr__(self):
