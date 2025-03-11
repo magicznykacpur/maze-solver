@@ -5,7 +5,9 @@ from window import Window
 
 def main():
     window = Window(800, 600)
-    maze = Maze(200, 100, 4, 7, 50, 50, window, seed=21.37)
+    print("drawing a maze...")
+    maze = Maze(200, 100, 6, 9, 50, 50, window)
+    print("maze drawn...")
 
     window.wait_for_close()
 

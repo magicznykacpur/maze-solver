@@ -57,7 +57,7 @@ class Maze:
 
     def _animate(self):
         self.window.redraw()
-        time.sleep(0.05)
+        time.sleep(0.015)
 
     def _break_entrance_and_exit(self):
         self.cells[0][0].has_left_wall = False
@@ -102,10 +102,7 @@ class Maze:
 
         if i > 0 and j > 0 and j < len(self.cells[0]) - 1:
             return [(i, j - 1), (i + 1, j), (i, j + 1), (i - 1, j)]
-        
-        if i == len(self.cells) and j == len(self.cells[0]):
-            return [(i, j)]
-        
+
         return [(i, j)]
 
     def _get_possible_directions(self, cells):
@@ -114,27 +111,35 @@ class Maze:
         )
 
     def _knock_walls_between(self, cell, other):
-        if cell[0] < other[0]:
-            print(f"tear down top of {cell} and bottom of {other}")
-            self.cells[cell[0]][cell[1]].has_top_wall = False
-            self._draw_cell(cell[0], cell[1])
-            self.cells[other[0]][other[1]].has_bottom_wall = False
-            self._draw_cell(other[0], other[1])
-        elif cell[0] > other[0]:
-            print(f"tear down bottom of {cell} and top of {other}")
-            self.cells[cell[0]][cell[1]].has_bottom_wall = False
-            self._draw_cell(cell[0], cell[1])
-            self.cells[other[0]][other[1]].has_top_wall = False
-            self._draw_cell(other[0], other[1])
+        if cell[0] > other[0]:
+            self._knock_top_bottom(cell, other)
+        elif cell[0] < other[0]:
+            self._knock_bottom_top(cell, other)
         elif cell[0] == other[0] and cell[1] < other[1]:
-            print(f"tear down right of {cell} and left of {other}")
-            self.cells[cell[0]][cell[1]].has_right_wall = False
-            self._draw_cell(cell[0], cell[1])
-            self.cells[other[0]][other[1]].has_left_wall = False
-            self._draw_cell(other[0], other[1])
+            self._knock_right_left(cell, other)
         elif cell[0] == other[0] and cell[1] > other[1]:
-            print(f"tear down left of {cell} and right of {other}")
-            self.cells[cell[0]][cell[1]].has_left_wall = False
-            self._draw_cell(cell[0], cell[1])
-            self.cells[other[0]][other[1]].has_right_wall = False
-            self._draw_cell(other[0], other[1])
+            self._knock_left_right(cell, other)
+
+    def _knock_top_bottom(self, cell, other):
+        self.cells[cell[0]][cell[1]].has_top_wall = False
+        self._draw_cell(cell[0], cell[1])
+        self.cells[other[0]][other[1]].has_bottom_wall = False
+        self._draw_cell(other[0], other[1])
+
+    def _knock_bottom_top(self, cell, other):
+        self.cells[cell[0]][cell[1]].has_bottom_wall = False
+        self._draw_cell(cell[0], cell[1])
+        self.cells[other[0]][other[1]].has_top_wall = False
+        self._draw_cell(other[0], other[1])
+
+    def _knock_right_left(self, cell, other):
+        self.cells[cell[0]][cell[1]].has_right_wall = False
+        self._draw_cell(cell[0], cell[1])
+        self.cells[other[0]][other[1]].has_left_wall = False
+        self._draw_cell(other[0], other[1])
+
+    def _knock_left_right(self, cell, other):
+        self.cells[cell[0]][cell[1]].has_left_wall = False
+        self._draw_cell(cell[0], cell[1])
+        self.cells[other[0]][other[1]].has_right_wall = False
+        self._draw_cell(other[0], other[1])
