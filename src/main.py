@@ -9,9 +9,10 @@ def main():
     maze = Maze(200, 100, 6, 9, 50, 50, window)
     print("maze drawn...")
 
+
     print("solving maze...")
-    solved = maze.solve()
-    print(solved)
+    # solved = maze.solve()
+    # print(solved)
     window.wait_for_close()
 
 

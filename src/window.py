@@ -14,6 +14,7 @@ class Window:
         self.canvas = Canvas()
         self.canvas.pack()
         self.canvas.config(width=self.width, height=self.height)
+        self.canvas.config(background="#d9d9d9")
 
         self.window_running = False
 
