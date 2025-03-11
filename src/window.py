@@ -1,6 +1,7 @@
 from tkinter import Tk, BOTH, Canvas
 
-class Window():
+
+class Window:
     def __init__(self, width=1440, height=900):
         self.width = width
         self.height = height
@@ -18,7 +19,7 @@ class Window():
     def redraw(self):
         self.root.update_idletasks()
         self.root.update()
-    
+
     def wait_for_close(self):
         self.window_running = True
 
