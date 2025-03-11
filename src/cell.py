@@ -4,7 +4,7 @@ from window import Window
 
 
 class Cell:
-    def __init__(self, x0: int, y0: int, x1: int, y1: int, window: Window):
+    def __init__(self, x0: int, y0: int, x1: int, y1: int, window: Window = None):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
@@ -15,16 +15,29 @@ class Cell:
         self.y1 = y1
         self.window = window
 
-    def draw(self, fill_color="red"):
+        self.visited = False
+
+    def draw(self, fill_color="black", width=1):
         canvas: Canvas = self.window.canvas
-        if self.has_left_wall:
-            canvas.create_line(self.x0, self.y0, self.x0, self.y1, fill=fill_color)
-        if self.has_right_wall:
-            canvas.create_line(self.x1, self.y0, self.x1, self.y1, fill=fill_color)
-        if self.has_top_wall:
-            canvas.create_line(self.x0, self.y0, self.x1, self.y0, fill=fill_color)
-        if self.has_bottom_wall:
-            canvas.create_line(self.x0, self.y1, self.x1, self.y1, fill=fill_color)
+        fill_color = "black" if self.has_left_wall else "#d9d9d9"
+        canvas.create_line(
+            self.x0, self.y0, self.x0, self.y1, fill=fill_color, width=width
+        )
+
+        fill_color = "black" if self.has_right_wall else "#d9d9d9"
+        canvas.create_line(
+            self.x1, self.y0, self.x1, self.y1, fill=fill_color, width=width
+        )
+
+        fill_color = "black" if self.has_top_wall else "#d9d9d9"
+        canvas.create_line(
+            self.x0, self.y0, self.x1, self.y0, fill=fill_color, width=width
+        )
+
+        fill_color = "black" if self.has_bottom_wall else "#d9d9d9"
+        canvas.create_line(
+            self.x0, self.y1, self.x1, self.y1, fill=fill_color, width=width
+        )
 
     def draw_move(self, to_cell, undo=False):
         fill_color = "red" if undo else "gray"
@@ -39,5 +52,8 @@ class Cell:
             to_cell_center[0],
             to_cell_center[1],
             fill=fill_color,
-            width=4
+            width=4,
         )
+
+    def __repr__(self):
+        return f"Cell(x0:{self.x0}, y0:{self.y0}, x1:{self.x1}, y1:{self.y1}, left:{self.has_left_wall}, right:{self.has_right_wall}, top:{self.has_top_wall}, bottom:{self.has_bottom_wall})"

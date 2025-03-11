@@ -13,6 +13,7 @@ class Window:
 
         self.canvas = Canvas()
         self.canvas.pack()
+        self.canvas.config(width=self.width, height=self.height)
 
         self.window_running = False
 
