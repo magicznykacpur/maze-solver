@@ -22,12 +22,15 @@ class Maze:
         self.cell_size_x = cell_size_x
         self.cell_size_y = cell_size_y
         self.window = window
-        self.seed = random.seed(seed) if seed else seed
+
+        if seed:
+            random.seed(seed)
 
         self.cells = []
         self._create_cells()
         if self.window:
             self._break_entrance_and_exit()
+            self._break_walls_r(0, 0)
 
     def _create_cells(self):
         for _ in range(self.num_rows):
@@ -49,12 +52,12 @@ class Maze:
         cell.y1 = (self.y1 + i * self.cell_size_y) + self.cell_size_y
 
         if self.window:
-            cell.draw(width=2)
+            cell.draw()
             self._animate()
 
     def _animate(self):
         self.window.redraw()
-        time.sleep(0.03)
+        time.sleep(0.05)
 
     def _break_entrance_and_exit(self):
         self.cells[0][0].has_left_wall = False
@@ -62,3 +65,76 @@ class Maze:
 
         self.cells[-1][-1].has_bottom_wall = False
         self._draw_cell(self.num_rows - 1, self.num_cols - 1)
+
+    def _break_walls_r(self, i, j):
+        self.cells[i][j].visited = True
+
+        while True:
+            adjacent = self._get_adjacent_cells(i, j)
+            possible_directions = self._get_possible_directions(adjacent)
+            if len(possible_directions) == 0:
+                self._draw_cell(i, j)
+                return
+
+            chosen_cell = random.choice(possible_directions)
+            self._knock_walls_between(chosen_cell, (i, j))
+
+            self._break_walls_r(chosen_cell[0], chosen_cell[1])
+
+    def _get_adjacent_cells(self, i, j):
+        if i == 0 and j == 0:
+            return [(i + 1, j), (i, j + 1)]
+
+        if i == len(self.cells) - 1 and j == 0:
+            return [(i - 1, j), (i, j + 1)]
+
+        if i == len(self.cells) - 1 and j > 0 and j < len(self.cells[0]) - 1:
+            return [(i, j - 1), (i - 1, j), (i, j + 1)]
+
+        if i == 0 and j > 0 and j < len(self.cells[0]) - 1:
+            return [(i, j - 1), (i + 1, j), (i, j + 1)]
+
+        if i == 0 and j == len(self.cells[0]) - 1:
+            return [(i, j - 1), (i + 1, j)]
+
+        if i > 0 and j == 0:
+            return [(i - 1, j), (i + 1, j), (i, j + 1)]
+
+        if i > 0 and j > 0 and j < len(self.cells[0]) - 1:
+            return [(i, j - 1), (i + 1, j), (i, j + 1), (i - 1, j)]
+        
+        if i == len(self.cells) and j == len(self.cells[0]):
+            return [(i, j)]
+        
+        return [(i, j)]
+
+    def _get_possible_directions(self, cells):
+        return list(
+            filter(lambda cell: not self.cells[cell[0]][cell[1]].visited, cells)
+        )
+
+    def _knock_walls_between(self, cell, other):
+        if cell[0] < other[0]:
+            print(f"tear down top of {cell} and bottom of {other}")
+            self.cells[cell[0]][cell[1]].has_top_wall = False
+            self._draw_cell(cell[0], cell[1])
+            self.cells[other[0]][other[1]].has_bottom_wall = False
+            self._draw_cell(other[0], other[1])
+        elif cell[0] > other[0]:
+            print(f"tear down bottom of {cell} and top of {other}")
+            self.cells[cell[0]][cell[1]].has_bottom_wall = False
+            self._draw_cell(cell[0], cell[1])
+            self.cells[other[0]][other[1]].has_top_wall = False
+            self._draw_cell(other[0], other[1])
+        elif cell[0] == other[0] and cell[1] < other[1]:
+            print(f"tear down right of {cell} and left of {other}")
+            self.cells[cell[0]][cell[1]].has_right_wall = False
+            self._draw_cell(cell[0], cell[1])
+            self.cells[other[0]][other[1]].has_left_wall = False
+            self._draw_cell(other[0], other[1])
+        elif cell[0] == other[0] and cell[1] > other[1]:
+            print(f"tear down left of {cell} and right of {other}")
+            self.cells[cell[0]][cell[1]].has_left_wall = False
+            self._draw_cell(cell[0], cell[1])
+            self.cells[other[0]][other[1]].has_right_wall = False
+            self._draw_cell(other[0], other[1])

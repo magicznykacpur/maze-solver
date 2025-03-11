@@ -17,7 +17,7 @@ class Cell:
 
         self.visited = False
 
-    def draw(self, fill_color="black", width=1):
+    def draw(self, fill_color="black", width=2):
         canvas: Canvas = self.window.canvas
         fill_color = "black" if self.has_left_wall else "#d9d9d9"
         canvas.create_line(
