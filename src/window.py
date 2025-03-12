@@ -11,10 +11,8 @@ class Window:
         self.root.protocol("Maze Solver", self.close)
         self.root.geometry(f"{self.width}x{self.height}")
 
-        self.canvas = Canvas()
+        self.canvas = Canvas(width=self.width, height=self.height, background="#d9d9d9")
         self.canvas.pack()
-        self.canvas.config(width=self.width, height=self.height)
-        self.canvas.config(background="#d9d9d9")
 
         self.window_running = False
 

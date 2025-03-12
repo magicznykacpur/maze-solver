@@ -27,7 +27,16 @@ class Maze:
             random.seed(seed)
 
         self.cells = []
+        self.line_ids = []
+
+    def draw(self):
+        if self.line_ids:
+            for id in self.line_ids:
+                self.window.canvas.delete(id)
+
+        self.cells = []
         self._create_cells()
+
         if self.window:
             self._break_entrance_and_exit()
             self._break_walls_r(0, 0)
@@ -56,7 +65,7 @@ class Maze:
             cell.draw()
             self._animate()
 
-    def _animate(self, sleep=0.015):
+    def _animate(self, sleep=0.0005):
         self.window.redraw()
         time.sleep(sleep)
 
@@ -158,10 +167,11 @@ class Maze:
         self._draw_cell(other[0], other[1])
 
     def solve(self):
-        return self._solve_r(0, 0)
+        if self.cells:
+            return self._solve_r(0, 0)
 
     def _solve_r(self, i, j):
-        self._animate(0.2)
+        self._animate(0.015)
         self.cells[i][j].visited = True
 
         if self.cells[i][j] == self.cells[-1][-1]:
@@ -172,12 +182,16 @@ class Maze:
 
         for cell in possible_directions:
             if not self._is_blocking((i, j), cell):
-                self.cells[i][j].draw_move(self.cells[cell[0]][cell[1]])
+                self.line_ids.append(
+                    self.cells[i][j].draw_move(self.cells[cell[0]][cell[1]])
+                )
                 next_move = self._solve_r(cell[0], cell[1])
                 if next_move:
                     return True
                 else:
-                    self.cells[i][j].draw_move(self.cells[cell[0]][cell[1]], True)
+                    self.line_ids.append(
+                        self.cells[i][j].draw_move(self.cells[cell[0]][cell[1]], True)
+                    )
 
         return False
 
