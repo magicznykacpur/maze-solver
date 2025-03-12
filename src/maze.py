@@ -56,9 +56,9 @@ class Maze:
             cell.draw()
             self._animate()
 
-    def _animate(self):
+    def _animate(self, sleep=0.015):
         self.window.redraw()
-        time.sleep(0.015)
+        time.sleep(sleep)
 
     def _break_entrance_and_exit(self):
         self.cells[0][0].has_left_wall = False
@@ -89,24 +89,31 @@ class Maze:
 
     def _get_adjacent_cells(self, i, j):
         if i == 0 and j == 0:
+            # bottom and right cells
             return [(i + 1, j), (i, j + 1)]
 
         if i == len(self.cells) - 1 and j == 0:
+            # top and right cells
             return [(i - 1, j), (i, j + 1)]
 
         if i == len(self.cells) - 1 and j > 0 and j < len(self.cells[0]) - 1:
+            # left, bottom and right cells
             return [(i, j - 1), (i - 1, j), (i, j + 1)]
 
         if i == 0 and j > 0 and j < len(self.cells[0]) - 1:
+            # left, top and right cells
             return [(i, j - 1), (i + 1, j), (i, j + 1)]
 
         if i == 0 and j == len(self.cells[0]) - 1:
+            # left and top cells
             return [(i, j - 1), (i + 1, j)]
 
         if i > 0 and j == 0:
+            # bottom, top and right cells
             return [(i - 1, j), (i + 1, j), (i, j + 1)]
 
         if i > 0 and j > 0 and j < len(self.cells[0]) - 1:
+            # left, bottom, top and right cells
             return [(i, j - 1), (i + 1, j), (i, j + 1), (i - 1, j)]
 
         return [(i, j)]
@@ -154,7 +161,7 @@ class Maze:
         return self._solve_r(0, 0)
 
     def _solve_r(self, i, j):
-        self._animate()
+        self._animate(0.2)
         self.cells[i][j].visited = True
 
         if self.cells[i][j] == self.cells[-1][-1]:
@@ -166,21 +173,20 @@ class Maze:
         for cell in possible_directions:
             if not self._is_blocking((i, j), cell):
                 self.cells[i][j].draw_move(self.cells[cell[0]][cell[1]])
-                self._solve_r(cell[0], cell[1])
-                # next_move = self._solve_r(cell[0], cell[1])
-                # if next_move:
-                #     return True
-                # else:
-                #     self.cells[i][j].draw_move(self.cells[cell[0]][cell[1]], True)
+                next_move = self._solve_r(cell[0], cell[1])
+                if next_move:
+                    return True
+                else:
+                    self.cells[i][j].draw_move(self.cells[cell[0]][cell[1]], True)
 
         return False
 
     def _is_blocking(self, cell, other):
         if cell[0] == other[0]:
             if cell[1] > other[1]:
-                return self.cells[other[0]][other[1]].has_left_wall
-            else:
                 return self.cells[other[0]][other[1]].has_right_wall
+            else:
+                return self.cells[other[0]][other[1]].has_left_wall
         elif cell[0] > other[0]:
             return self.cells[other[0]][other[1]].has_bottom_wall
         else:
